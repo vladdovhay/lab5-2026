@@ -35,3 +35,57 @@ class TestTavern(unittest.TestCase):
 
     def test_repr(self):
         self.assertEqual(repr(self.tavern), "Tavern('П'яний дракон')")
+
+    def _fill(self):
+        self.tavern.add_visitor(self.customer)
+        self.tavern.add_visitor(self.hero)
+        self.tavern.add_visitor(self.guy)
+
+    def test_search_by_name(self):
+        self._fill()
+        result = self.tavern.search("арагорн")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].name, "Арагорн")
+
+    def test_search_by_race(self):
+        self._fill()
+        result = self.tavern.search("гоблін")
+        self.assertEqual(len(result), 1)
+
+    def test_filter_by_type(self):
+        self._fill()
+        heroes = self.tavern.filter_by_type(Adventurer)
+        self.assertEqual(len(heroes), 1)
+        self.assertIsInstance(heroes[0], Adventurer)
+
+    def test_filter_by_min_gold(self):
+        self._fill()
+        rich = self.tavern.filter_by_min_gold(50)
+        self.assertEqual(len(rich), 2)
+
+    def test_sort_by_gold(self):
+        self._fill()
+        result = self.tavern.sort_by_gold()
+        self.assertEqual(result[0].name, "Грумбл")
+        self.assertEqual(result[-1].name, "Арагорн")
+
+    def test_sort_by_gold_reverse(self):
+        self._fill()
+        result = self.tavern.sort_by_gold(reverse=True)
+        self.assertEqual(result[0].name, "Арагорн")
+
+    def test_sort_by_name(self):
+        self._fill()
+        result = self.tavern.sort_by_name()
+        self.assertEqual(result[0].name, "Арагорн")
+
+    def test_serve_all(self):
+        self._fill()
+        result = self.tavern.serve_all()
+        self.assertEqual(len(result), 3)
+        self.assertIn("Ліра замовляє: Медовуха", result)
+
+    def test_total_tips(self):
+        self._fill()
+        # 1 (Customer) + 10 (Adventurer) + 0 (Troublemaker)
+        self.assertEqual(self.tavern.total_tips(), 11)
