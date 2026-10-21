@@ -1,75 +1,73 @@
-from src.adventurer import Library
-from src.visitor import Book
-from src.customer import Magazine
+from src.tavern import Tavern
+from src.customer import Customer
+from src.adventurer import Adventurer
+from src.troublemaker import Troublemaker
+
 
 def main():
-    # Створення бібліотеки
-    library = Library()
+    tavern = Tavern("П'яний дракон")
 
-    # Додавання книг
-    book1 = Book("1984", "George Orwell", 1949, "978-0451524935")
-    book2 = Book("To Kill a Mockingbird", "Harper Lee", 1960, "978-0446310789")
-    book3 = Book("The Great Gatsby", "F. Scott Fitzgerald", 1925, "978-0743273565")
+    # Створення відвідувачів
+    lira = Customer("Ліра", "Ельф", 50, "Медовуха")
+    aragorn = Adventurer("Арагорн", "Людина", 200, 5)
+    grumble = Troublemaker("Грумбл", "Гоблін", 20, 8)
+    gimli = Customer("Гімлі", "Гном", 120, "Темний ель")
 
-    library.add_item(book1)
-    library.add_item(book2)
-    library.add_item(book3)
+    for visitor in (lira, aragorn, grumble, gimli):
+        tavern.add_visitor(visitor)
 
-    # Додавання журналів
-    magazine1 = Magazine("National Geographic", "Various", 2023, 1)
-    magazine2 = Magazine("Time", "Various", 2023, 15)
-
-    library.add_item(magazine1)
-    library.add_item(magazine2)
-
-    # Виведення всіх предметів у бібліотеці
-    print("Всі предмети в бібліотеці:")
-    for item in library._items:
-        print(item)
+    print(tavern)
     print()
 
-    # Пошук за ключовим словом
-    keyword = "Orwell"
-    print(f"Результати пошуку за ключовим словом '{keyword}':")
-    for item in library.search(keyword):
-        print(item)
+    print("Усі відвідувачі:")
+    for v in tavern.get_all():
+        print(v)
     print()
 
-    # Пошук за роком
-    year = 1925
-    print(f"Результати пошуку за роком {year}:")
-    for item in library.search_by_year(year):
-        print(item)
+    print("Поліморфізм - кожен замовляє своє:")
+    for line in tavern.serve_all():
+        print(line)
     print()
 
-    # Отримання всіх книг
-    print("Всі книги в бібліотеці:")
-    for book in library.get_all_books():
-        print(book)
+    print("Унікальні методи підкласів:")
+    print(aragorn.tell_story())
+    print(grumble.start_fight())
     print()
 
-    # Отримання всіх журналів
-    print("Всі журнали в бібліотеці:")
-    for magazine in library.get_all_magazines():
-        print(magazine)
+    print("Пошук 'гном':")
+    for v in tavern.search("гном"):
+        print(v)
     print()
 
-    # Видалення предмету
-    print("Видалення 'To Kill a Mockingbird'")
-    library.remove_item(book2)
-
-    # Виведення оновленого списку предметів
-    print("Оновлений список предметів у бібліотеці:")
-    for item in library._items:
-        print(item)
+    print("Тільки пригодники:")
+    for v in tavern.filter_by_type(Adventurer):
+        print(v)
     print()
 
-    # Спроба додати неправильний тип об'єкта
-    print("Спроба додати неправильний тип об'єкта:")
+    print("Відвідувачі з золотом >= 100:")
+    for v in tavern.filter_by_min_gold(100):
+        print(v)
+    print()
+
+    print("Сортування за золотом (від більшого):")
+    for v in tavern.sort_by_gold(reverse=True):
+        print(v)
+    print()
+
+    print(f"Сума чайових: {tavern.total_tips()}")
+    print()
+
+    print("Видалення Грумбла")
+    tavern.remove_visitor(grumble)
+    print(tavern)
+    print()
+
+    print("Спроба додати неправильний тип:")
     try:
-        library.add_item("Це не об'єкт LibraryItem")
+        tavern.add_visitor("Це не відвідувач")
     except TypeError as e:
         print(f"Помилка: {e}")
+
 
 if __name__ == "__main__":
     main()
