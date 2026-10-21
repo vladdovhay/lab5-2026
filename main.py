@@ -1,6 +1,6 @@
-from src.library import Library
-from src.book import Book
-from src.magazine import Magazine
+from src.adventurer import Library
+from src.visitor import Book
+from src.customer import Magazine
 
 def main():
     # Створення бібліотеки
